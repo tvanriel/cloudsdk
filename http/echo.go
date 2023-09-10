@@ -1,6 +1,7 @@
 package http
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/brpaz/echozap"
@@ -40,13 +41,14 @@ func RegisterRoutes(routes []RouteGroup, server *Http) {
         }
 }
 
+var prefixSlashes = regexp.MustCompile(`^/+`)
 func makeApiRoute(route RouteGroup) string {
-        return strings.Join([]string{
+        return prefixSlashes.ReplaceAllString(strings.Join([]string{
                 "/",
                 route.ApiGroup(),
                 "/",
                 route.Version(),
-        }, "")
+        }, ""), "/")
 }
 
 
