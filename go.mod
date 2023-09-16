@@ -15,6 +15,7 @@ require (
 	go.uber.org/zap v1.24.0
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.4
+	gotest.tools/v3 v3.5.0
 	k8s.io/api v0.28.1
 	k8s.io/apimachinery v0.28.1
 	k8s.io/client-go v0.28.1
