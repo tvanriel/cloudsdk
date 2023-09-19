@@ -7,7 +7,9 @@ import (
 	"github.com/brpaz/echozap"
 	"github.com/labstack/echo-contrib/echoprometheus"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"go.uber.org/zap"
+	"golang.org/x/time/rate"
 )
 
 type Http struct {
@@ -26,6 +28,9 @@ func NewEcho(config Configuration, log *zap.Logger) (*Http) {
         server.Use(echoprometheus.NewMiddlewareWithConfig(
                 echoprometheus.MiddlewareConfig{},
         ))
+        if config.Ratelimit > 0 {
+                server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(config.Ratelimit))))
+        }
 
         
         
