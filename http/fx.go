@@ -12,9 +12,6 @@ var Module = fx.Module(
 			fx.ParamTags(GROUP_ROUTES),
 		),
 	),
-	fx.Invoke(
-		Listen,
-	),
 	fx.Provide(
 		NewEcho,
 	),
