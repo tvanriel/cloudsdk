@@ -5,9 +5,7 @@ import (
 )
 
 type RouteGroup interface {
-        ApiGroup() string
-        Version() string
-        Handler(*echo.Group)
+	ApiGroup() string
+	Version() string
+	Handler(*echo.Group)
 }
-
-

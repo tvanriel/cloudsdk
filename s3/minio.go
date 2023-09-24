@@ -6,11 +6,11 @@ import (
 )
 
 func NewMinioClient(config *Configuration) (*minio.Client, error) {
-        client, err :=  minio.New(config.Endpoint, &minio.Options{
-                Creds: credentials.NewStaticV4(config.AccessKey, config.SecretKey, ""),
-                Secure: config.SSL,
-        })
+	client, err := minio.New(config.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(config.AccessKey, config.SecretKey, ""),
+		Secure: config.SSL,
+	})
 
-        return client, err
+	return client, err
 
 }

@@ -1,6 +1,5 @@
 /*
 Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -8,10 +7,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-        "github.com/tvanriel/cloudsdk/example/application/app"
+	"github.com/tvanriel/cloudsdk/example/application/app"
 )
-
-
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -24,8 +21,8 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-                app.Run()
-        },
+		app.Run()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -48,5 +45,3 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
-
-

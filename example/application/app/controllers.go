@@ -1,28 +1,27 @@
 package app
 
 import (
-        "github.com/tvanriel/cloudsdk/http"
-        "github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4"
+	"github.com/tvanriel/cloudsdk/http"
 )
 
-
-type TestController struct {}
+type TestController struct{}
 
 func (t *TestController) Version() string {
-        return "v1"
+	return "v1"
 }
 
 func (t *TestController) Handler(g *echo.Group) {
-        g.GET("/", func(c echo.Context) error {
-                c.String(200, "dawai dawai!")
-                return nil
-        })
+	g.GET("/", func(c echo.Context) error {
+		c.String(200, "dawai dawai!")
+		return nil
+	})
 }
 
 func (t *TestController) ApiGroup() string {
-        return "test"
+	return "test"
 }
 
 func NewHttpController() http.RouteGroup {
-        return &TestController{}
+	return &TestController{}
 }

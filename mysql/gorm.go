@@ -10,37 +10,34 @@ import (
 	"moul.io/zapgorm2"
 )
 
-
 type GormParams struct {
-        fx.In
-        
-        Config Configuration
-        Log *zap.Logger
+	fx.In
 
-
+	Config Configuration
+	Log    *zap.Logger
 }
 
 func NewGorm(in GormParams) (*gorm.DB, error) {
-        return gorm.Open(
-                drivermysql.Open(
-                        makeDSN(in.Config.Host, in.Config.User, in.Config.Password, in.Config.DBName),
-                ),
-                &gorm.Config{Logger: zapgorm2.New(in.Log)},
-        )
+	return gorm.Open(
+		drivermysql.Open(
+			makeDSN(in.Config.Host, in.Config.User, in.Config.Password, in.Config.DBName),
+		),
+		&gorm.Config{Logger: zapgorm2.New(in.Log)},
+	)
 }
 
 func makeDSN(host string, username string, password string, dbName string) string {
-        return strings.Join(
-                []string{
-                        username,
-                        ":",
-                        password,
-                        "@tcp(",
-                        host,
-                        ")/",
-                        dbName,
-                        "?charset=utf8&parseTime=true&loc=Local",
-                },
-                "",
-        )
+	return strings.Join(
+		[]string{
+			username,
+			":",
+			password,
+			"@tcp(",
+			host,
+			")/",
+			dbName,
+			"?charset=utf8&parseTime=true&loc=Local",
+		},
+		"",
+	)
 }
