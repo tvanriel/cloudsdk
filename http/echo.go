@@ -14,11 +14,11 @@ import (
 
 type Http struct {
 	Address string
-	engine  *echo.Echo
+	Engine  *echo.Echo
 }
 
 func (h *Http) Use(middleware echo.MiddlewareFunc) {
-	h.engine.Use(middleware)
+	h.Engine.Use(middleware)
 }
 
 func NewEcho(config Configuration, log *zap.Logger) *Http {
@@ -34,13 +34,13 @@ func NewEcho(config Configuration, log *zap.Logger) *Http {
 
 	return &Http{
 		Address: config.Address,
-		engine:  server,
+		Engine:  server,
 	}
 }
 
 func RegisterRoutes(routes []RouteGroup, server *Http) {
 	for i := range routes {
-		routes[i].Handler(server.engine.Group(makeApiRoute(routes[i])))
+		routes[i].Handler(server.Engine.Group(makeApiRoute(routes[i])))
 	}
 }
 
@@ -56,5 +56,5 @@ func makeApiRoute(route RouteGroup) string {
 }
 
 func Listen(server *Http) {
-	go server.engine.Start(server.Address)
+	go server.Engine.Start(server.Address)
 }
