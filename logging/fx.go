@@ -10,7 +10,7 @@ var Module = fx.Module("logging", fx.Provide(NewZapLogger))
 
 func FXLogger() fx.Option {
 	return fx.WithLogger(func(l *zap.Logger) fxevent.Logger {
-		return &fxevent.ZapLogger{Logger: l}
+		return &fxevent.ZapLogger{Logger: l.Named("fx")}
 	})
 
 }
