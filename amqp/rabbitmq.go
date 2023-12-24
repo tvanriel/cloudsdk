@@ -9,33 +9,34 @@ import (
 )
 
 type Connection struct {
-        config Configuration
-        Amqp *amqp.Connection
-        Log *zap.Logger
+	config Configuration
+	Amqp   *amqp.Connection
+	Log    *zap.Logger
 }
 
 type Channel struct {
 	*amqp.Channel
 	closed int32
 }
+
 const delay = 3
 
 func NewAMQPConnection(config Configuration, l *zap.Logger) (*Connection, error) {
-        conn, err := amqp.Dial(config.Dsn())
-        if err != nil {
-                return nil, err
-        }
-	        return &Connection{
-                config: config,
-                Amqp: conn,
-                Log: l,
-        }, nil
+	conn, err := amqp.Dial(config.Dsn())
+	if err != nil {
+		return nil, err
+	}
+	return &Connection{
+		config: config,
+		Amqp:   conn,
+		Log:    l,
+	}, nil
 }
 func (a *Connection) Reconnect() error {
-        cfg := amqp.Config{Properties: amqp.NewConnectionProperties()}
+	cfg := amqp.Config{Properties: amqp.NewConnectionProperties()}
 	cfg.Properties.SetClientConnectionName(a.config.ConsumerName)
-        var err error
-        a.Amqp, err = amqp.DialConfig(a.config.Dsn(), cfg)
+	var err error
+	a.Amqp, err = amqp.DialConfig(a.config.Dsn(), cfg)
 	if err != nil {
 		return err
 	}
@@ -47,7 +48,7 @@ func (a *Connection) Reconnect() error {
 			if !ok {
 				break
 			}
-                        a.Log.Warn("Reconnecting to AMQP queue", zap.String("reason", reason.Reason))
+			a.Log.Warn("Reconnecting to AMQP queue", zap.String("reason", reason.Reason))
 
 			// reconnect if not closed by developer
 			for {
@@ -56,10 +57,10 @@ func (a *Connection) Reconnect() error {
 
 				conn, err := amqp.Dial(a.config.Dsn())
 				if err == nil {
-                                        a.Amqp = conn
+					a.Amqp = conn
 					break
 				}
-                                a.Log.Warn("Could not reconnect to AMQP queue", zap.Error(err))
+				a.Log.Warn("Could not reconnect to AMQP queue", zap.Error(err))
 			}
 		}
 	}()
@@ -84,9 +85,9 @@ func (a *Connection) Channel() (*Channel, error) {
 				channel.Close() // close again, ensure closed flag set when connection closed
 				break
 			}
-		        a.Log.Warn("channel closed", 
-                                zap.String("reason", reason.Reason),
-                        )
+			a.Log.Warn("channel closed",
+				zap.String("reason", reason.Reason),
+			)
 
 			// reconnect if not closed by developer
 			for {

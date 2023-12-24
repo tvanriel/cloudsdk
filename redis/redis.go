@@ -8,29 +8,29 @@ import (
 )
 
 type NewRedisClientParams struct {
-        fx.In
+	fx.In
 
-        Configuration Configuration
+	Configuration Configuration
 }
 
 func NewRedisClient(p NewRedisClientParams) (*RedisClient, error) {
-        conn := gredis.NewClient(&gredis.Options{
-                Addr: p.Configuration.Address,
-                Password: p.Configuration.Password,
-                DB: p.Configuration.DatabaseIndex,
-        })
-        err := conn.Ping(context.Background()).Err()
+	conn := gredis.NewClient(&gredis.Options{
+		Addr:     p.Configuration.Address,
+		Password: p.Configuration.Password,
+		DB:       p.Configuration.DatabaseIndex,
+	})
+	err := conn.Ping(context.Background()).Err()
 
-
-        return &RedisClient{
-                conn: conn,
-        }, err
+	return &RedisClient{
+		conn: conn,
+	}, err
 
 }
 
 type RedisClient struct {
-        conn *gredis.Client
+	conn *gredis.Client
 }
+
 func (r *RedisClient) Conn() *gredis.Client {
-        return r.conn
+	return r.conn
 }

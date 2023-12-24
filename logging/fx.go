@@ -12,5 +12,4 @@ func FXLogger() fx.Option {
 	return fx.WithLogger(func(l *zap.Logger) fxevent.Logger {
 		return &fxevent.ZapLogger{Logger: l.Named("fx")}
 	})
-
 }
