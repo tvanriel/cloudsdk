@@ -34,3 +34,4 @@ type RedisClient struct {
 func (r *RedisClient) Conn() *gredis.Client {
 	return r.conn
 }
+
