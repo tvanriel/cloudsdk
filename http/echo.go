@@ -1,13 +1,15 @@
 package http
 
 import (
+	"context"
 	"regexp"
 	"strings"
 
 	"github.com/brpaz/echozap"
 	"github.com/labstack/echo-contrib/echoprometheus"
-	"github.com/labstack/echo/v4"
+	echo "github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 )
@@ -21,10 +23,16 @@ func (h *Http) Use(middleware echo.MiddlewareFunc) {
 	h.Engine.Use(middleware)
 }
 
-func NewEcho(config Configuration, log *zap.Logger) *Http {
+func NewEcho(config Configuration, log *zap.Logger, lc fx.Lifecycle) *Http {
 	server := echo.New()
 
-	server.Use(echozap.ZapLogger(log))
+        server.HideBanner = true
+
+        if config.Debug {
+                server.Debug = true
+        }
+
+	server.Use(echozap.ZapLogger(log.Named("http")))
 	server.Use(echoprometheus.NewMiddlewareWithConfig(
 		echoprometheus.MiddlewareConfig{},
 	))
@@ -32,10 +40,22 @@ func NewEcho(config Configuration, log *zap.Logger) *Http {
 		server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(config.Ratelimit))))
 	}
 
-	return &Http{
+        http := &Http{
 		Address: config.Address,
 		Engine:  server,
 	}
+
+        lc.Append(fx.Hook{
+                OnStart: func(ctx context.Context) error {
+	                go http.Engine.Start(http.Address)
+                        return nil
+                },
+                OnStop: func(ctx context.Context) error {
+                        return http.Engine.Shutdown(ctx)
+                },
+        })
+        return http
+
 }
 
 func RegisterRoutes(routes []RouteGroup, server *Http) {
@@ -55,6 +75,9 @@ func makeApiRoute(route RouteGroup) string {
 	}, ""), "/")
 }
 
-func Listen(server *Http) {
-	go server.Engine.Start(server.Address)
+func (h *Http) EnableDebugging() {
+        h.Engine.Debug = true
+}
+func (h *Http) DisableDebugging() {
+        h.Engine.Debug = false
 }
