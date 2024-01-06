@@ -18,6 +18,7 @@ func NewRedisClient(p NewRedisClientParams) (*RedisClient, error) {
 		Addr:     p.Configuration.Address,
 		Password: p.Configuration.Password,
 		DB:       p.Configuration.DatabaseIndex,
+                MaxRetries: 0,
 	})
 	err := conn.Ping(context.Background()).Err()
 
