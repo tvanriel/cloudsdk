@@ -15,10 +15,10 @@ type NewRedisClientParams struct {
 
 func NewRedisClient(p NewRedisClientParams) (*RedisClient, error) {
 	conn := gredis.NewClient(&gredis.Options{
-		Addr:     p.Configuration.Address,
-		Password: p.Configuration.Password,
-		DB:       p.Configuration.DatabaseIndex,
-                MaxRetries: 0,
+		Addr:       p.Configuration.Address,
+		Password:   p.Configuration.Password,
+		DB:         p.Configuration.DatabaseIndex,
+		MaxRetries: 0,
 	})
 	err := conn.Ping(context.Background()).Err()
 
@@ -35,4 +35,3 @@ type RedisClient struct {
 func (r *RedisClient) Conn() *gredis.Client {
 	return r.conn
 }
-

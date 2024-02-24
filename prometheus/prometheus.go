@@ -15,42 +15,42 @@ import (
 type Prometheus struct {
 	registry   *prometheus.Registry
 	listenAddr string
-        Log *zap.Logger
+	Log        *zap.Logger
 }
 
 func NewPrometheus(config Configuration, log *zap.Logger, lc fx.Lifecycle) *Prometheus {
 
 	registry := prometheus.NewRegistry()
-        l := log.Named("prometheus")
+	l := log.Named("prometheus")
 
 	registry.MustRegister(
 		collectors.NewGoCollector(),
 		collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}),
 	)
 
-        prom := &Prometheus{
+	prom := &Prometheus{
 		registry:   registry,
 		listenAddr: config.Address,
 	}
-        
-        lc.Append(fx.Hook{
-                OnStart: func(ctx context.Context) error {
-                        l.Info("listen address", zap.String("addr", prom.listenAddr))
 
-                        go func() {
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			l.Info("listen address", zap.String("addr", prom.listenAddr))
 
-	srv := http.NewServeMux()
-	srv.Handle("/metrics", promhttp.HandlerFor(prom.registry, promhttp.HandlerOpts{Registry: prom.registry}))
+			go func() {
 
-                err := http.ListenAndServe(prom.listenAddr, srv)
-                if err != nil {
-                                        l.Error("Failed to open metricslistener", zap.Error(err))
-                }
-                        }()
-                        return nil
-                },
-        })
-        return prom
+				srv := http.NewServeMux()
+				srv.Handle("/metrics", promhttp.HandlerFor(prom.registry, promhttp.HandlerOpts{Registry: prom.registry}))
+
+				err := http.ListenAndServe(prom.listenAddr, srv)
+				if err != nil {
+					l.Error("Failed to open metricslistener", zap.Error(err))
+				}
+			}()
+			return nil
+		},
+	})
+	return prom
 
 }
 
@@ -58,14 +58,14 @@ func (p *Prometheus) Register(c prometheus.Collector) error {
 	return p.registry.Register(c)
 }
 func (p *Prometheus) Unregister(c prometheus.Collector) bool {
-        return p.registry.Unregister(c)
+	return p.registry.Unregister(c)
 }
 func (p *Prometheus) Gather() ([]*io_prometheus_client.MetricFamily, error) {
-        return p.registry.Gather()
+	return p.registry.Gather()
 }
 func (p *Prometheus) Collect(ch chan<- prometheus.Metric) {
-        p.registry.Collect(ch)
+	p.registry.Collect(ch)
 }
 func (p *Prometheus) Describe(ch chan<- *prometheus.Desc) {
-        p.registry.Describe(ch)
+	p.registry.Describe(ch)
 }

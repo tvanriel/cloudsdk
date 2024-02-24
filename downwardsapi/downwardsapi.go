@@ -42,9 +42,9 @@ func (d *DownwardsAPI) File(key string) ([]Field, error) {
 		return nil, err
 	}
 
-        b, err := io.ReadAll(f)
+	b, err := io.ReadAll(f)
 	if err != nil {
 		return nil, err
 	}
-        return Parse(string(b))
+	return Parse(string(b))
 }

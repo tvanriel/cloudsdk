@@ -26,11 +26,11 @@ func (h *Http) Use(middleware echo.MiddlewareFunc) {
 func NewEcho(config Configuration, log *zap.Logger, lc fx.Lifecycle) *Http {
 	server := echo.New()
 
-        server.HideBanner = true
+	server.HideBanner = true
 
-        if config.Debug {
-                server.Debug = true
-        }
+	if config.Debug {
+		server.Debug = true
+	}
 
 	server.Use(echozap.ZapLogger(log.Named("http")))
 	server.Use(echoprometheus.NewMiddlewareWithConfig(
@@ -40,21 +40,21 @@ func NewEcho(config Configuration, log *zap.Logger, lc fx.Lifecycle) *Http {
 		server.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(config.Ratelimit))))
 	}
 
-        http := &Http{
+	http := &Http{
 		Address: config.Address,
 		Engine:  server,
 	}
 
-        lc.Append(fx.Hook{
-                OnStart: func(ctx context.Context) error {
-	                go http.Engine.Start(http.Address)
-                        return nil
-                },
-                OnStop: func(ctx context.Context) error {
-                        return http.Engine.Shutdown(ctx)
-                },
-        })
-        return http
+	lc.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			go http.Engine.Start(http.Address)
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			return http.Engine.Shutdown(ctx)
+		},
+	})
+	return http
 
 }
 
@@ -76,8 +76,8 @@ func makeApiRoute(route RouteGroup) string {
 }
 
 func (h *Http) EnableDebugging() {
-        h.Engine.Debug = true
+	h.Engine.Debug = true
 }
 func (h *Http) DisableDebugging() {
-        h.Engine.Debug = false
+	h.Engine.Debug = false
 }
