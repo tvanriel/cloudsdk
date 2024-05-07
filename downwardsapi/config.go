@@ -5,5 +5,5 @@ package downwardsapi
 
 type Configuration struct {
 	// The root directory of the Kubernetes Downwards API mounts.
-	Root string
+	Root string `hc:"root"`
 }

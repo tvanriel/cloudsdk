@@ -3,11 +3,11 @@ package amqp
 import "strings"
 
 type Configuration struct {
-	Address      string
-	ConsumerName string
-	TLS          bool
-	Username     string
-	Password     string
+	Address      string `hcl:"address"`
+	ConsumerName string `hcl:"consumer_name"`
+	TLS          bool   `hcl:"tls"`
+	Username     string `hcl:"username"`
+	Password     string `hcl:"password"`
 }
 
 func (config Configuration) Dsn() string {

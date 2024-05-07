@@ -1,5 +1,5 @@
 package logging
 
 type Configuration struct {
-	Development bool
+	Development bool `hcl:"development"`
 }

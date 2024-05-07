@@ -47,7 +47,15 @@ func NewEcho(config Configuration, log *zap.Logger, lc fx.Lifecycle) *Http {
 
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			go http.Engine.Start(http.Address)
+			if config.TLS != nil {
+				go func() {
+					http.Engine.Logger.Fatal(http.Engine.StartTLS(http.Address, config.TLS.CertFile, config.TLS.KeyFile))
+				}()
+				return nil
+			}
+			go func() {
+				http.Engine.Logger.Fatal(http.Engine.Start(http.Address))
+			}()
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
