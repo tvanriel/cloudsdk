@@ -47,5 +47,4 @@ func TestDsn(t *testing.T) {
 		TLS:      true,
 	}
 	assert.Equal(t, tlsHostnameWithUsernameAndPassword.Dsn(), "amqps://guest:password@localhost/")
-
 }

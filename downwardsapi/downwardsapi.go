@@ -36,7 +36,6 @@ func (e Field) String() string {
 }
 
 func (d *DownwardsAPI) File(key string) ([]Field, error) {
-
 	f, err := os.Open(path.Join(d.root, key))
 	if err != nil {
 		return nil, err

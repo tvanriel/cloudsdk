@@ -1,8 +1,9 @@
 package downwardsapi_test
 
 import (
-	"github.com/tvanriel/cloudsdk/downwardsapi"
 	"testing"
+
+	"github.com/tvanriel/cloudsdk/downwardsapi"
 )
 
 const s = `
@@ -30,5 +31,4 @@ func TestMain(t *testing.T) {
 	if lines[2].String() != `test="something"` {
 		t.Errorf("lines[2] has an unexpected value: %s", lines[0].String())
 	}
-
 }

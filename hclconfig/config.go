@@ -9,10 +9,6 @@ import (
 	"github.com/hashicorp/hcl/v2/hclsimple"
 )
 
-type Config struct {
-	Local hcl.Body `hcl:"local,remain"`
-}
-
 func HclConfiguration[T any](config T, projectName string) error {
 	filename, ok := getFilename(projectName)
 	if !ok {
@@ -45,5 +41,4 @@ func getFilename(projectName string) (string, bool) {
 		}
 	}
 	return "", false
-
 }

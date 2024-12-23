@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+
 	batchv1 "k8s.io/api/batch/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -16,7 +17,6 @@ type KubernetesClient struct {
 
 func NewKubernetesClient(config *Configuration) (*KubernetesClient, error) {
 	clientset, err := newClientSet(config)
-
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +28,6 @@ func NewKubernetesClient(config *Configuration) (*KubernetesClient, error) {
 }
 
 func newClientSet(config *Configuration) (*kubernetes.Clientset, error) {
-
 	if config.InCluster {
 		kubeconfig, err := rest.InClusterConfig()
 		if err != nil {
@@ -38,7 +37,6 @@ func newClientSet(config *Configuration) (*kubernetes.Clientset, error) {
 	}
 
 	restconfig, err := clientcmd.BuildConfigFromFlags("", config.Kubeconfig)
-
 	if err != nil {
 		return nil, err
 	}

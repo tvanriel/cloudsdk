@@ -25,7 +25,6 @@ func NewRedisClient(p NewRedisClientParams) (*RedisClient, error) {
 	return &RedisClient{
 		conn: conn,
 	}, err
-
 }
 
 type RedisClient struct {

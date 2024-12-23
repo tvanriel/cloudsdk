@@ -63,7 +63,6 @@ func NewEcho(config Configuration, log *zap.Logger, lc fx.Lifecycle) *Http {
 		},
 	})
 	return http
-
 }
 
 func RegisterRoutes(routes []RouteGroup, server *Http) {
@@ -86,6 +85,7 @@ func makeApiRoute(route RouteGroup) string {
 func (h *Http) EnableDebugging() {
 	h.Engine.Debug = true
 }
+
 func (h *Http) DisableDebugging() {
 	h.Engine.Debug = false
 }

@@ -16,8 +16,10 @@ var parseKey = pars.Many(pars.Any(pars.Lower.Map(pars.ToString),
 	pars.String("_"),
 )).Map(concatValues)
 
-var parseEquals = pars.Byte('=').Map(pars.ToString)
-var parseValue = pars.AsParser(pars.Line).Map(pars.ToString).Map(maybeUnquote)
+var (
+	parseEquals = pars.Byte('=').Map(pars.ToString)
+	parseValue  = pars.AsParser(pars.Line).Map(pars.ToString).Map(maybeUnquote)
+)
 
 var parseField = pars.Seq(parseKey, parseEquals, parseValue).Map(evaluateField)
 
@@ -29,7 +31,6 @@ var parseDocument = pars.Many(parseLine).Map(evaluateDocument)
 
 func Parse(s string) ([]Field, error) {
 	x, err := parseDocument.Parse(pars.FromString(s))
-
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +41,6 @@ func Parse(s string) ([]Field, error) {
 	}
 
 	return lines, nil
-
 }
 
 func concatValues(p *pars.Result) error {
@@ -80,6 +80,7 @@ func evaluateDocument(p *pars.Result) error {
 
 	return nil
 }
+
 func isQuoted(s string) bool {
 	if len(s) < 2 {
 		return false
@@ -90,6 +91,7 @@ func isQuoted(s string) bool {
 	}
 	return false
 }
+
 func maybeUnquote(r *pars.Result) error {
 	if s, ok := r.Value.(string); ok {
 		if isQuoted(s) {

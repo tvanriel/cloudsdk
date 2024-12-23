@@ -1,6 +1,7 @@
 package hclconfig
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -11,11 +12,13 @@ import (
 
 func parseVariables(filename string) (map[string]cty.Value, error) {
 	f, err := os.Open(filename)
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("hclconfig: cannot open file %q: %w", filename, err)
 	}
 	src, err := io.ReadAll(f)
+	if err != nil {
+		return nil, fmt.Errorf("hclconfig: cannot read input file %q: %w", filename, err)
+	}
 
 	file, diags := hclsyntax.ParseConfig(src, filename, hcl.InitialPos)
 
@@ -41,12 +44,12 @@ func parseVariables(filename string) (map[string]cty.Value, error) {
 	for i := range localBlocks {
 		attrs, diags := localBlocks[i].Body.JustAttributes()
 		if diags.HasErrors() {
-			return nil, diags
+			return nil, fmt.Errorf("hclconfig: cannot parse input file %q: %w", filename, diags)
 		}
 		for a := range attrs {
 			v, diags := attrs[a].Expr.Value(nil)
 			if diags.HasErrors() {
-				return nil, diags
+				return nil, fmt.Errorf("hclconfig: cannot parse input file %q: %w", filename, diags)
 			}
 			k := attrs[a].Name
 			variables[k] = v
@@ -54,5 +57,4 @@ func parseVariables(filename string) (map[string]cty.Value, error) {
 	}
 
 	return variables, nil
-
 }

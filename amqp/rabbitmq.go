@@ -32,6 +32,7 @@ func NewAMQPConnection(config Configuration, l *zap.Logger) (*Connection, error)
 		Log:    l,
 	}, nil
 }
+
 func (a *Connection) Reconnect() error {
 	cfg := amqp.Config{Properties: amqp.NewConnectionProperties()}
 	cfg.Properties.SetClientConnectionName(a.config.ConsumerName)
@@ -67,6 +68,7 @@ func (a *Connection) Reconnect() error {
 
 	return nil
 }
+
 func (a *Connection) Channel() (*Channel, error) {
 	ch, err := a.Amqp.Channel()
 	if err != nil {
@@ -101,7 +103,6 @@ func (a *Connection) Channel() (*Channel, error) {
 				}
 			}
 		}
-
 	}()
 
 	return channel, nil

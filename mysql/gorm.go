@@ -32,7 +32,7 @@ func NewGorm(in GormParams, lc fx.Lifecycle) (*gorm.DB, error) {
 	lc.Append(fx.StartHook(func() {
 		go func() {
 			ticker := time.NewTicker(30 * time.Second)
-			for _ = range ticker.C {
+			for range ticker.C {
 				if db == nil {
 					return
 				}
@@ -46,7 +46,6 @@ func NewGorm(in GormParams, lc fx.Lifecycle) (*gorm.DB, error) {
 					return
 				}
 			}
-
 		}()
 	}))
 	return db, err

@@ -12,5 +12,4 @@ func NewMinioClient(config *Configuration) (*minio.Client, error) {
 	})
 
 	return client, err
-
 }
