@@ -13,11 +13,14 @@ import (
 func parseVariables(filename string) (map[string]cty.Value, error) {
 	f, err := os.Open(filename)
 	if err != nil {
-		return nil, fmt.Errorf("hclconfig: cannot open file %q: %w", filename, err)
+		return nil, fmt.Errorf("open %q: %w", filename, err)
 	}
+
+	defer f.Close()
+
 	src, err := io.ReadAll(f)
 	if err != nil {
-		return nil, fmt.Errorf("hclconfig: cannot read input file %q: %w", filename, err)
+		return nil, fmt.Errorf("read config file %q: %w", filename, err)
 	}
 
 	file, diags := hclsyntax.ParseConfig(src, filename, hcl.InitialPos)
@@ -38,18 +41,18 @@ func parseVariables(filename string) (map[string]cty.Value, error) {
 		return nil, diags
 	}
 
-	variables := make(map[string]cty.Value)
+	variables := map[string]cty.Value{}
 
 	localBlocks := blocks.Blocks.OfType("local")
 	for i := range localBlocks {
 		attrs, diags := localBlocks[i].Body.JustAttributes()
 		if diags.HasErrors() {
-			return nil, fmt.Errorf("hclconfig: cannot parse input file %q: %w", filename, diags)
+			return nil, fmt.Errorf("parse %q: %w", filename, diags)
 		}
 		for a := range attrs {
-			v, diags := attrs[a].Expr.Value(nil)
+			v, diags := attrs[a].Expr.Value(&hcl.EvalContext{Variables: variables})
 			if diags.HasErrors() {
-				return nil, fmt.Errorf("hclconfig: cannot parse input file %q: %w", filename, diags)
+				return nil, fmt.Errorf("evaluate variable %s in %s:%d+%d: %w", attrs[a].Name, attrs[a].Range.Filename, attrs[a].Range.Start.Line, attrs[a].Range.Start.Column, diags)
 			}
 			k := attrs[a].Name
 			variables[k] = v
