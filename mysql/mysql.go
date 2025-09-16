@@ -15,7 +15,9 @@ type NewMySQLParams struct {
 }
 
 func NewMySQL(opts NewMySQLParams) (*sql.DB, error) {
-	conn, err := sql.Open("mysql", makeDSN(opts.Configuration.Host, opts.Configuration.User, opts.Configuration.Password, opts.Configuration.DBName))
+	setDefaultOptsIfUnset(&opts.Configuration)
+
+	conn, err := sql.Open("mysql", makeDSN(opts.Configuration.Host, opts.Configuration.User, opts.Configuration.Password, opts.Configuration.DBName, opts.Configuration.Opts))
 	if err != nil {
 		return nil, fmt.Errorf("mysql: cannot open db: %w", err)
 	}

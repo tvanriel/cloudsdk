@@ -1,6 +1,7 @@
 package mysql
 
 import (
+	"net/url"
 	"strings"
 	"time"
 
@@ -19,9 +20,10 @@ type GormParams struct {
 }
 
 func NewGorm(in GormParams, lc fx.Lifecycle) (*gorm.DB, error) {
+	setDefaultOptsIfUnset(&in.Config)
 	db, err := gorm.Open(
 		drivermysql.Open(
-			makeDSN(in.Config.Host, in.Config.User, in.Config.Password, in.Config.DBName),
+			makeDSN(in.Config.Host, in.Config.User, in.Config.Password, in.Config.DBName, in.Config.Opts),
 		),
 		&gorm.Config{Logger: zapgorm2.New(in.Log.Named("mysql"))},
 	)
@@ -51,7 +53,7 @@ func NewGorm(in GormParams, lc fx.Lifecycle) (*gorm.DB, error) {
 	return db, err
 }
 
-func makeDSN(host string, username string, password string, dbName string) string {
+func makeDSN(host string, username string, password string, dbName string, opts map[string][]string) string {
 	return strings.Join(
 		[]string{
 			username,
@@ -61,8 +63,23 @@ func makeDSN(host string, username string, password string, dbName string) strin
 			host,
 			")/",
 			dbName,
-			"?charset=utf8&parseTime=true&loc=Local",
+			"?",
+			(url.Values).Encode(opts),
 		},
 		"",
 	)
+}
+
+func defaultOpts() map[string][]string {
+	return map[string][]string{
+		"charset":   {"utf8mb4"},
+		"parseTime": {"true"},
+		"loc":       {"Local"},
+	}
+}
+
+func setDefaultOptsIfUnset(cfg *Configuration) {
+	if cfg.Opts == nil {
+		cfg.Opts = defaultOpts()
+	}
 }

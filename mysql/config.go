@@ -1,8 +1,9 @@
 package mysql
 
 type Configuration struct {
-	Host     string `hcl:"host"`
-	User     string `hcl:"user"`
-	Password string `hcl:"password"`
-	DBName   string `hcl:"db_name"`
+	Host     string              `hcl:"host"`
+	User     string              `hcl:"user"`
+	Password string              `hcl:"password"`
+	DBName   string              `hcl:"db_name"`
+	Opts     map[string][]string `hcl:"opts,optional"`
 }
