@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path"
-
-	hcl "github.com/hashicorp/hcl/v2"
-	"github.com/hashicorp/hcl/v2/hclsimple"
 )
 
 var ErrFindConfigFile = errors.New("locate config file")
@@ -18,16 +15,14 @@ func HclConfiguration[T any](config T, projectName string) error {
 		return ErrFindConfigFile
 	}
 
-	ctxVars, err := parseVariables(filename)
+	contents, err := os.ReadFile(filename)
 	if err != nil {
-		return fmt.Errorf("parse variables %q: %w", filename, err)
+		return fmt.Errorf("read config file %q: %w", filename, err)
 	}
 
-	err = hclsimple.DecodeFile(filename, &hcl.EvalContext{
-		Variables: ctxVars,
-	}, config)
+	err = parseHCL(config, string(contents), filename)
 	if err != nil {
-		return fmt.Errorf("decode hcl config file %q: %w", filename, err)
+		return fmt.Errorf("parse config file: %w", err)
 	}
 
 	return nil
